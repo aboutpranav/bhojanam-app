@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import "./Footer.css";
 import { assets } from "../../assets/assets";
 
@@ -30,7 +32,9 @@ const Footer = () => {
           <h2>COMPANY</h2>
 
           <ul>
-            <li>Home</li>
+            <Link to="/">
+              <li>Home</li>
+            </Link>
             <li>About Us</li>
             <li>Delivery</li>
             <li>Privacy Policy</li>
