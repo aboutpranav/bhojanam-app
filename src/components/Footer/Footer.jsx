@@ -11,10 +11,12 @@ const Footer = () => {
           <img className="logo" src={assets.logo} alt="" />
 
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto
-            deserunt quae laboriosam velit beatae veniam est, corporis fugiat
-            totam ullam? Qui, esse reprehenderit. Quisquam alias ipsum quidem
-            odio, iste ad.
+            We prepare every dish fresh, using the finest ingredients, and
+            deliver it straight from our kitchen to your door. Our easy online
+            ordering and secure payment options make enjoying your favorite
+            meals simple. Track your delivery in real time and savor the
+            convenience. Because when it comes to great food, we believe it
+            should always arrive hot, fresh, and full of flavor.
           </p>
 
           <div className="footer-social-icons">
