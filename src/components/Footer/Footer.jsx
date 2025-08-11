@@ -32,9 +32,9 @@ const Footer = () => {
           <h2>COMPANY</h2>
 
           <ul>
-            <Link to="/">
-              <li>Home</li>
-            </Link>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
             <li>About Us</li>
             <li>Delivery</li>
             <li>Privacy Policy</li>
