@@ -22,9 +22,9 @@ const Footer = () => {
           </p>
 
           <div className="footer-social-icons">
-            <i class="bi bi-facebook"></i>
-            <i class="bi bi-twitter-x"></i>
-            <i class="bi bi-linkedin"></i>
+            <i className="bi bi-facebook"></i>
+            <i className="bi bi-twitter-x"></i>
+            <i className="bi bi-linkedin"></i>
           </div>
         </div>
 

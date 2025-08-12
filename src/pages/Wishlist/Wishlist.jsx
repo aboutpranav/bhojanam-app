@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { toast } from "react-toastify";
 
@@ -35,7 +35,7 @@ const Wishlist = () => {
       {wishlistItemsList.length === 0 ? (
         <div className="empty-wishlist">
           <div className="empty-wishlist-icon">
-            <i class="bi bi-heart"></i>
+            <i className="bi bi-heart"></i>
           </div>
           <h2>Your wishlist is empty</h2>
           <p>
