@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 import "./UserProfile.css";
 
-const UserProfile = ({ user, setUser }) => {
+const UserProfile = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
   const [showAddAddress, setShowAddAddress] = useState(false);
@@ -18,12 +21,22 @@ const UserProfile = ({ user, setUser }) => {
     phone: "",
   });
   const [editingProfile, setEditingProfile] = useState(false);
-  const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
+
+  // Default user data
+  const [user, setUser] = useState({
+    firstName: "Sample",
+    lastName: "User",
+    email: "user@email.com",
+    phone: "9910101010",
   });
+
+  const [profileData, setProfileData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+  });
+
   const [addresses, setAddresses] = useState([]);
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [addressesError, setAddressesError] = useState(null);
@@ -64,8 +77,13 @@ const UserProfile = ({ user, setUser }) => {
       }
       const data = await response.json();
       setAddresses(data);
+
+      toast.success(`${data.length} addresses loaded successfully`);
     } catch (error) {
       setAddressesError(error.message);
+
+      toast.error(`Error loading addresses: ${error.message}`);
+
       console.error("Error fetching addresses:", error);
     } finally {
       setAddressesLoading(false);
@@ -75,6 +93,8 @@ const UserProfile = ({ user, setUser }) => {
   const fetchOrders = async () => {
     setOrdersLoading(true);
     setOrdersError(null);
+
+    toast.info("Loading your order history...");
 
     try {
       console.log("Fetching all orders from database...");
@@ -109,9 +129,14 @@ const UserProfile = ({ user, setUser }) => {
       });
 
       setOrders(Array.isArray(allOrders) ? allOrders : []);
+
+      toast.success(`${allOrders.length} orders loaded successfully`);
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrdersError(error.message);
+
+      toast.error(`Error loading orders: ${error.message}`);
+
       setOrders([]);
     } finally {
       setOrdersLoading(false);
@@ -145,16 +170,6 @@ const UserProfile = ({ user, setUser }) => {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="profile-container">
-        <div className="profile-error">
-          <h2>Please log in to view your profile</h2>
-        </div>
-      </div>
-    );
-  }
-
   const handleAddressInputChange = (e) => {
     setNewAddress({
       ...newAddress,
@@ -171,6 +186,9 @@ const UserProfile = ({ user, setUser }) => {
 
   const handleAddAddress = async (e) => {
     e.preventDefault();
+
+    toast.info("Adding new address...");
+
     try {
       const response = await fetch(
         "https://bhojanam-app-backend.vercel.app/addresses",
@@ -190,6 +208,8 @@ const UserProfile = ({ user, setUser }) => {
       const data = await response.json();
       console.log("Address added successfully:", data);
 
+      toast.success("Address added successfully! 🏠");
+
       setNewAddress({
         firstName: "",
         lastName: "",
@@ -206,6 +226,8 @@ const UserProfile = ({ user, setUser }) => {
       fetchAddresses();
     } catch (error) {
       console.error("Error adding address:", error);
+
+      toast.error(`Failed to add address: ${error.message}`);
     }
   };
 
@@ -217,9 +239,18 @@ const UserProfile = ({ user, setUser }) => {
     };
     setUser(updatedUser);
     setEditingProfile(false);
+
+    toast.success("Profile updated successfully! ✅");
   };
 
   const deleteAddress = async (addressId) => {
+    const addressToDelete = addresses.find((addr) => addr._id === addressId);
+    const addressName = addressToDelete
+      ? `${addressToDelete.street}, ${addressToDelete.city}`
+      : "Address";
+
+    toast.info("Deleting address...");
+
     try {
       const response = await fetch(
         `https://bhojanam-app-backend.vercel.app/addresses/${addressId}`,
@@ -233,9 +264,13 @@ const UserProfile = ({ user, setUser }) => {
       }
 
       console.log("Address deleted successfully");
+      toast.success(`${addressName} deleted successfully! 🗑️`);
+
       fetchAddresses();
     } catch (error) {
       console.error("Error deleting address:", error);
+
+      toast.error(`Failed to delete address: ${error.message}`);
     }
   };
 
@@ -538,7 +573,6 @@ const UserProfile = ({ user, setUser }) => {
               ) : orders && orders.length > 0 ? (
                 orders.map((order) => (
                   <div key={order._id} className="order-card">
-                    {/* Order Header */}
                     <div className="order-header">
                       <div className="order-info">
                         <h3>Order #{order.orderNumber}</h3>

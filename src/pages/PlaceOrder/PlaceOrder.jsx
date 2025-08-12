@@ -1,5 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 
@@ -39,9 +42,18 @@ const PlaceOrder = () => {
 
       if (data.length > 0) {
         setSelectedAddress(data[0]._id);
+
+        toast.success("Addresses loaded successfully");
+      } else {
+        toast.warning(
+          "No saved addresses found. Please add an address from your profile."
+        );
       }
     } catch (error) {
       setAddressesError(error.message);
+
+      toast.error(`Error loading addresses: ${error.message}`);
+
       console.error("Error fetching addresses:", error);
     } finally {
       setAddressesLoading(false);
@@ -50,15 +62,26 @@ const PlaceOrder = () => {
 
   const handleAddressChange = (addressId) => {
     setSelectedAddress(addressId);
+
+    const selectedAddr = addresses.find((addr) => addr._id === addressId);
+    if (selectedAddr) {
+      toast.info(
+        `Delivery address selected: ${selectedAddr.street}, ${selectedAddr.city}`
+      );
+    }
   };
 
   const handleProceedToPayment = () => {
     if (!selectedAddress) {
+      toast.warning("Please select a delivery address");
+
       alert("Please select a delivery address");
       return;
     }
 
     if (getTotalCartAmount() === 0) {
+      toast.warning("Your cart is empty");
+
       alert("Your cart is empty");
       return;
     }
@@ -66,6 +89,8 @@ const PlaceOrder = () => {
     const selectedAddressData = addresses.find(
       (addr) => addr._id === selectedAddress
     );
+
+    toast.success("Proceeding to order confirmation...");
 
     navigate("/order-confirmation", {
       state: {

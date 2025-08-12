@@ -5,7 +5,7 @@ import { StoreContext } from "../../context/StoreContext";
 
 import FoodItem from "../FoodItem/FoodItem";
 
-const FoodDisplay = ({ category }) => {
+const FoodDisplay = ({ selectedCategories }) => {
   const {
     filteredFoodList,
     searchTerm,
@@ -21,7 +21,7 @@ const FoodDisplay = ({ category }) => {
       <div className="food-display" id="food-display">
         <h2>What everyone's ordering...</h2>
         <div className="loading-message">
-          <p>Loading delicious food items...</p> {/* Loading message */}
+          <p>Loading delicious food items...</p>
         </div>
       </div>
     );
@@ -32,20 +32,19 @@ const FoodDisplay = ({ category }) => {
       <div className="food-display" id="food-display">
         <h2>What everyone's ordering...</h2>
         <div className="error-message">
-          <p>Sorry, we couldn't load the menu. Please try again later.</p>{" "}
-          {/* Error message */}
-          <p className="error-details">Error: {error}</p>{" "}
-          {/* Show actual error for debugging */}
+          <p>Sorry, we couldn't load the menu. Please try again later.</p>
+          <p className="error-details">Error: {error}</p>
         </div>
       </div>
     );
   }
 
   const categoryFilteredItems = filteredFoodList.filter((item) => {
-    if (category === "All" || category === item.category) {
+    if (selectedCategories.length === 0) {
       return true;
     }
-    return false;
+
+    return selectedCategories.includes(item.category);
   });
 
   if (!categoryFilteredItems || categoryFilteredItems.length === 0) {
@@ -56,8 +55,10 @@ const FoodDisplay = ({ category }) => {
           {searchTerm && (
             <span className="filter-tag">Search: "{searchTerm}"</span>
           )}
-          {category !== "All" && (
-            <span className="filter-tag">Category: {category}</span>
+          {selectedCategories.length > 0 && (
+            <span className="filter-tag">
+              Categories: {selectedCategories.join(", ")}
+            </span>
           )}
           {ratingFilter > 0 && (
             <span className="filter-tag">Rating: {ratingFilter}+ stars</span>
@@ -96,9 +97,10 @@ const FoodDisplay = ({ category }) => {
               <span className="filter-label">Search:</span> "{searchTerm}"
             </span>
           )}
-          {category !== "All" && (
+          {selectedCategories.length > 0 && (
             <span className="filter-tag">
-              <span className="filter-label">Category:</span> {category}
+              <span className="filter-label">Categories:</span>{" "}
+              {selectedCategories.join(", ")}
             </span>
           )}
           {ratingFilter > 0 && (

@@ -2,11 +2,14 @@ import React, { useContext, useState } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 import { StoreContext } from "../../context/StoreContext";
 
-const Navbar = ({ setShowLogin, isLoggedIn, setIsLoggedIn, setUser }) => {
+const Navbar = () => {
   const [menu, setMenu] = useState("home");
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  // const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   const {
     getTotalCartAmount,
@@ -18,16 +21,16 @@ const Navbar = ({ setShowLogin, isLoggedIn, setIsLoggedIn, setUser }) => {
 
   const handleSearchChange = (e) => {
     handleSearch(e.target.value);
+
+    if (e.target.value.trim() !== "") {
+      toast.info(`Searching for "${e.target.value}"...`);
+    }
   };
 
   const handleClearSearch = () => {
     clearSearch();
-  };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    setShowProfileDropdown(false);
+    toast.info("Search cleared");
   };
 
   return (
@@ -99,33 +102,11 @@ const Navbar = ({ setShowLogin, isLoggedIn, setIsLoggedIn, setUser }) => {
           <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
         </div>
 
-        {isLoggedIn ? (
-          <div className="navbar-profile">
-            <div
-              className="profile-icon"
-              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-            >
-              <i className="bi bi-person-circle"></i>
-            </div>
-            {showProfileDropdown && (
-              <div className="profile-dropdown">
-                <Link
-                  to="/profile"
-                  onClick={() => setShowProfileDropdown(false)}
-                >
-                  <i className="bi bi-person"></i>
-                  Profile
-                </Link>
-                <div className="dropdown-item" onClick={handleLogout}>
-                  <i className="bi bi-box-arrow-right"></i>
-                  Logout
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <button onClick={() => setShowLogin(true)}>sign in</button>
-        )}
+        <div className="navbar-profile">
+          <Link to="/profile" className="profile-icon">
+            <i className="bi bi-person-circle"></i>
+          </Link>
+        </div>
       </div>
     </div>
   );

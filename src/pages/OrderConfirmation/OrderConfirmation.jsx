@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+
 import "./OrderConfirmation.css";
 import { StoreContext } from "../../context/StoreContext";
 
@@ -84,6 +87,8 @@ const OrderConfirmation = () => {
 
     setIsPlacingOrder(true);
 
+    toast.info("Placing your order...");
+
     try {
       const orderPayload = {
         customerInfo: orderData.customerInfo,
@@ -129,9 +134,14 @@ const OrderConfirmation = () => {
 
       clearCart();
 
+      toast.success(
+        "🎉 Order placed successfully! Your food will be delivered soon."
+      );
+
       createConfetti();
     } catch (error) {
       console.error("Error placing order:", error);
+      toast.error(`Failed to place order: ${error.message}. Please try again.`);
       alert(`Failed to place order: ${error.message}. Please try again.`);
     } finally {
       setIsPlacingOrder(false);

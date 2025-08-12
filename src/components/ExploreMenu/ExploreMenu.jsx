@@ -3,7 +3,21 @@ import "./ExploreMenu.css";
 
 import { menu_list } from "../../assets/assets";
 
-const ExploreMenu = ({ category, setCategory }) => {
+const ExploreMenu = ({ selectedCategories, setSelectedCategories }) => {
+  const handleCategoryClick = (categoryName) => {
+    setSelectedCategories((prev) => {
+      if (prev.includes(categoryName)) {
+        return prev.filter((cat) => cat !== categoryName);
+      } else {
+        return [...prev, categoryName];
+      }
+    });
+  };
+
+  const clearAllCategories = () => {
+    setSelectedCategories([]);
+  };
+
   return (
     <div className="explore-menu" id="explore-menu">
       <h1>Discover What's Cooking...</h1>
@@ -15,25 +29,42 @@ const ExploreMenu = ({ category, setCategory }) => {
         made with care and creativity.
       </p>
 
+      {selectedCategories.length > 0 && (
+        <div className="selected-categories">
+          <div className="selected-categories-list">
+            <span className="selected-label">Selected: </span>
+            {selectedCategories.map((cat, index) => (
+              <span key={cat} className="selected-category-tag">
+                {cat}
+                {index < selectedCategories.length - 1 && ", "}
+              </span>
+            ))}
+          </div>
+          <button className="clear-categories-btn" onClick={clearAllCategories}>
+            Clear All
+          </button>
+        </div>
+      )}
+
       <div className="explore-menu-list" id="explore-menu-list">
         {menu_list.map((item, index) => {
+          const isSelected = selectedCategories.includes(item.menu_name);
+
           return (
             <div
-              onClick={() =>
-                setCategory((prev) =>
-                  prev === item.menu_name ? "All" : item.menu_name
-                )
-              }
+              onClick={() => handleCategoryClick(item.menu_name)}
               key={index}
               className="explore-menu-list-item"
             >
               <img
-                className={category === item.menu_name ? "active" : ""}
+                className={isSelected ? "active" : ""}
                 src={item.menu_image}
                 alt=""
               />
 
-              <p>{item.menu_name}</p>
+              <p className={isSelected ? "selected-text" : ""}>
+                {item.menu_name}
+              </p>
             </div>
           );
         })}

@@ -5,49 +5,42 @@ import Cart from "./pages/Cart/Cart";
 import Wishlist from "./pages/Wishlist/Wishlist";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Footer from "./components/Footer/Footer";
-import { useState } from "react";
-import LoginPopup from "./components/LoginPopup/LoginPopup";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import OrderConfirmation from "./pages/OrderConfirmation/OrderConfirmation";
 
-const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+const App = () => {
   return (
     <>
-      {showLogin ? (
-        <LoginPopup
-          setShowLogin={setShowLogin}
-          setIsLoggedIn={setIsLoggedIn}
-          setUser={setUser}
-        />
-      ) : (
-        <></>
-      )}
       <div className="app">
-        <Navbar
-          setShowLogin={setShowLogin}
-          isLoggedIn={isLoggedIn}
-          setIsLoggedIn={setIsLoggedIn}
-          setUser={setUser}
-        />
+        <Navbar />
 
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/order" element={<PlaceOrder />} />
-          <Route
-            path="/profile"
-            element={<UserProfile user={user} setUser={setUser} />}
-          />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
         </Routes>
       </div>
 
       <Footer />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };

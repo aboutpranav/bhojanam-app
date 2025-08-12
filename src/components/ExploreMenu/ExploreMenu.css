@@ -14,19 +14,51 @@
   color: #808080;
 }
 
-/* .explore-menu-list {
+/* Selected categories section */
+.selected-categories {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 30px;
-  text-align: center;
-  margin: 20px 0px;
-  overflow-x: scroll;
+  background: #f8f8f8;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 4px solid tomato;
+  margin: 10px 0;
 }
 
-.explore-menu-list::-webkit-scrollbar {
-  display: none;
-} */
+.selected-categories-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.selected-label {
+  font-weight: 500;
+  color: #262626;
+  margin-right: 8px;
+}
+
+.selected-category-tag {
+  color: tomato;
+  font-weight: 500;
+}
+
+.clear-categories-btn {
+  background: tomato;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.clear-categories-btn:hover {
+  background: #d63031;
+}
 
 .explore-menu-list {
   display: flex;
@@ -38,12 +70,10 @@
   overflow-x: auto;
   padding-bottom: 10px;
 
-  /* Firefox scrollbar styling */
   scrollbar-width: thin;
   scrollbar-color: #ccc #f1f1f1;
 }
 
-/* Custom scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 .explore-menu-list::-webkit-scrollbar {
   height: 8px;
 }
@@ -62,9 +92,17 @@
   background: #999;
 }
 
-/* Ensure items don't shrink */
 .explore-menu-list > * {
   flex-shrink: 0;
+}
+
+.explore-menu-list-item {
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.explore-menu-list-item:hover {
+  transform: translateY(-2px);
 }
 
 .explore-menu-list-item img {
@@ -84,6 +122,12 @@
   color: #747474;
   font-size: max(1.4vw, 16px);
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.explore-menu-list-item p.selected-text {
+  color: tomato;
+  font-weight: 600;
 }
 
 .explore-menu hr {
@@ -96,11 +140,26 @@
 .explore-menu-list-item .active {
   border: 4px solid tomato;
   padding: 2px;
+  box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
 }
 
 @media (max-width: 1050px) {
   .explore-menu-text {
     max-width: 100%;
     font-size: 14px;
+  }
+
+  .selected-categories {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .selected-categories-list {
+    width: 100%;
+  }
+
+  .clear-categories-btn {
+    align-self: flex-end;
   }
 }

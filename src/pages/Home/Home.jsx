@@ -7,17 +7,20 @@ import AppDownload from "../../components/AppDownload/AppDownload";
 import FilterSort from "../../components/FilterSort/FilterSort";
 
 const Home = () => {
-  const [category, setCategory] = useState("All");
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   return (
     <div>
       <Header />
 
-      <ExploreMenu category={category} setCategory={setCategory} />
+      <ExploreMenu
+        selectedCategories={selectedCategories}
+        setSelectedCategories={setSelectedCategories}
+      />
 
       <FilterSort />
 
-      <FoodDisplay category={category} />
+      <FoodDisplay selectedCategories={selectedCategories} />
 
       <AppDownload />
     </div>

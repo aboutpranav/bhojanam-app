@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import useFetch from "../useFetch";
 
 export const StoreContext = createContext(null);
@@ -48,32 +50,59 @@ const StoreContextProvider = (props) => {
   }, [food_list, searchTerm, ratingFilter, priceSort]);
 
   const addToCart = (itemId) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
     if (!cartItems[itemId]) {
       setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
+      toast.success(`${itemName} added to cart!`);
     } else {
       setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+      toast.success(`${itemName} quantity increased!`);
     }
   };
 
   const removeFromCart = (itemId) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+
+    if (cartItems[itemId] === 1) {
+      toast.info(`${itemName} removed from cart`);
+    } else {
+      toast.info(`${itemName} quantity decreased`);
+    }
   };
 
   const clearCart = () => {
     setCartItems({});
+
+    toast.success("Cart cleared successfully");
+
     console.log("Cart cleared successfully");
   };
 
   const addToWishlist = (itemId) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
     setWishlistItems((prev) => ({ ...prev, [itemId]: true }));
+
+    toast.success(`${itemName} added to wishlist!`);
   };
 
   const removeFromWishlist = (itemId) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
     setWishlistItems((prev) => {
       const newWishlist = { ...prev };
       delete newWishlist[itemId];
       return newWishlist;
     });
+
+    toast.info(`${itemName} removed from wishlist`);
   };
 
   const toggleWishlist = (itemId) => {

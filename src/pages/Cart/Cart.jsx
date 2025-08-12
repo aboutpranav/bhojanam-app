@@ -1,4 +1,7 @@
 import React, { useContext } from "react";
+
+import { toast } from "react-toastify";
+
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +11,14 @@ const Cart = () => {
     useContext(StoreContext);
 
   const navigate = useNavigate();
+
+  const handleRemoveFromCart = (itemId) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
+    removeFromCart(itemId);
+    toast.info(`${itemName} removed from cart`);
+  };
 
   return (
     <div className="cart">
@@ -35,7 +46,10 @@ const Cart = () => {
                   <p>₹ {item.price}</p>
                   <p>{cartItems[item._id]}</p>
                   <p>₹ {item.price * cartItems[item._id]}</p>
-                  <p onClick={() => removeFromCart(item._id)} className="cross">
+                  <p
+                    onClick={() => handleRemoveFromCart(item._id)}
+                    className="cross"
+                  >
                     <i class="bi bi-trash"></i>
                   </p>
                 </div>

@@ -1,4 +1,7 @@
 import React, { useContext } from "react";
+
+import { toast } from "react-toastify";
+
 import "./Wishlist.css";
 import { StoreContext } from "../../context/StoreContext";
 import FoodItem from "../../components/FoodItem/FoodItem";
@@ -6,6 +9,21 @@ import FoodItem from "../../components/FoodItem/FoodItem";
 const Wishlist = () => {
   const { getWishlistItems, wishlistItems } = useContext(StoreContext);
   const wishlistItemsList = getWishlistItems();
+
+  useEffect(() => {
+    if (wishlistItemsList.length > 0) {
+      toast.info(
+        `You have ${wishlistItemsList.length} item${
+          wishlistItemsList.length !== 1 ? "s" : ""
+        } in your wishlist`
+      );
+    }
+  }, []);
+
+  const handleBrowseMenu = () => {
+    toast.info("Redirecting to menu...");
+    window.location.href = "/";
+  };
 
   return (
     <div className="wishlist">
@@ -24,10 +42,7 @@ const Wishlist = () => {
             Start adding your favorite food items to your wishlist by clicking
             the heart icon on any dish!
           </p>
-          <button
-            className="browse-menu-btn"
-            onClick={() => (window.location.href = "/")}
-          >
+          <button className="browse-menu-btn" onClick={handleBrowseMenu}>
             Browse Menu
           </button>
         </div>
