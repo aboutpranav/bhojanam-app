@@ -1,0 +1,52 @@
+.food-listing-page {
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.food-listing-header {
+  text-align: center;
+  margin: 40px 0;
+  padding: 0 20px;
+}
+
+.food-listing-header h1 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.food-listing-subtitle {
+  font-size: clamp(14px, 2vw, 18px);
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .food-listing-page {
+    padding: 10px 0;
+  }
+
+  .food-listing-header {
+    margin: 20px 0;
+  }
+
+  .food-listing-header h1 {
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .food-listing-header {
+    margin: 15px 0;
+    padding: 0 15px;
+  }
+}

@@ -62,6 +62,41 @@ const StoreContextProvider = (props) => {
     }
   };
 
+  // function to add multiple quantities at once
+  const addToCartBulk = (itemId, quantity) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || 0) + quantity,
+    }));
+
+    toast.success(`${quantity} x ${itemName} added to cart!`);
+  };
+
+  // function to set exact quantity in cart
+  const setCartQuantity = (itemId, quantity) => {
+    const item = food_list.find((product) => product._id === itemId);
+    const itemName = item ? item.name : "Item";
+
+    if (quantity <= 0) {
+      // Remove item from cart completely
+      setCartItems((prev) => {
+        const newCart = { ...prev };
+        delete newCart[itemId];
+        return newCart;
+      });
+      toast.info(`${itemName} removed from cart`);
+    } else {
+      setCartItems((prev) => ({
+        ...prev,
+        [itemId]: quantity,
+      }));
+      toast.success(`${itemName} quantity set to ${quantity}`);
+    }
+  };
+
   const removeFromCart = (itemId) => {
     const item = food_list.find((product) => product._id === itemId);
     const itemName = item ? item.name : "Item";
@@ -173,6 +208,8 @@ const StoreContextProvider = (props) => {
     cartItems,
     setCartItems,
     addToCart,
+    addToCartBulk,
+    setCartQuantity,
     removeFromCart,
     clearCart,
     getTotalCartAmount,

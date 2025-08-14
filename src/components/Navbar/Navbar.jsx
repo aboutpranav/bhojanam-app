@@ -47,13 +47,13 @@ const Navbar = () => {
         >
           home
         </Link>
-        <a
-          href="#explore-menu-list"
+        <Link
+          to="/menu"
           onClick={() => setMenu("menu")}
           className={menu === "menu" ? "active" : ""}
         >
           menu
-        </a>
+        </Link>
         <a
           href="#app-download"
           onClick={() => setMenu("mobile-app")}
