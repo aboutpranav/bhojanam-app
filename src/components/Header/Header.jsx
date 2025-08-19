@@ -15,7 +15,7 @@ const Header = () => {
           every meal memorable.
         </p>
 
-        <a href="#explore-menu-list">
+        <a href="/menu">
           <button>View Menu</button>
         </a>
       </div>

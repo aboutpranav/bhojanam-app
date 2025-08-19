@@ -12,7 +12,6 @@ const FoodListing = () => {
   const { handleRatingFilter, handlePriceSort } = useContext(StoreContext);
 
   useEffect(() => {
-    // Handle URL parameters for pre-filtering
     const category = searchParams.get("category");
     const filter = searchParams.get("filter");
 
@@ -21,7 +20,6 @@ const FoodListing = () => {
     }
 
     if (filter === "popular") {
-      // Set rating filter to 4+ for popular items
       handleRatingFilter(4.0);
     }
   }, [searchParams, handleRatingFilter]);

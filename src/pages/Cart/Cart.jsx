@@ -13,7 +13,13 @@ const Cart = () => {
     addToCart,
     removeFromCart,
     getTotalCartAmount,
+    getDeliveryFee,
+    getFinalTotal,
+    isFreeDeliveryEligible,
+    getRemainingForFreeDelivery,
     clearCart,
+    wishlistItems,
+    toggleWishlist,
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -39,7 +45,6 @@ const Cart = () => {
     const itemName = item ? item.name : "Item";
     const currentQuantity = cartItems[itemId];
 
-    // Remove all quantities of this item
     for (let i = 0; i < currentQuantity; i++) {
       removeFromCart(itemId);
     }
@@ -51,11 +56,20 @@ const Cart = () => {
     toast.success("Cart cleared successfully");
   };
 
+  const handleToggleWishlist = (itemId) => {
+    toggleWishlist(itemId);
+  };
+
   const getCartItems = () => {
     return food_list.filter((item) => cartItems[item._id] > 0);
   };
 
   const cartItemsList = getCartItems();
+  const cartTotal = getTotalCartAmount();
+  const deliveryFee = getDeliveryFee();
+  const finalTotal = getFinalTotal();
+  const freeDeliveryEligible = isFreeDeliveryEligible();
+  const remainingForFreeDelivery = getRemainingForFreeDelivery();
 
   if (cartItemsList.length === 0) {
     return (
@@ -90,6 +104,39 @@ const Cart = () => {
         </button>
       </div>
 
+      {!freeDeliveryEligible && remainingForFreeDelivery > 0 && (
+        <div className="free-delivery-banner">
+          <div className="banner-content">
+            <i className="bi bi-truck"></i>
+            <span>
+              {" "}
+              Add ₹{remainingForFreeDelivery} more to get{" "}
+              <strong>FREE DELIVERY!</strong>
+            </span>
+            <br /> <br />
+          </div>
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{ width: `${(cartTotal / 299) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      {freeDeliveryEligible && (
+        <div className="free-delivery-achieved">
+          <div className="banner-content success">
+            <i className="bi bi-check-circle-fill"></i>
+            <span>
+              {" "}
+              🎉 <strong>Congratulations!</strong> You've earned FREE DELIVERY!
+            </span>
+            <br /> <br />
+          </div>
+        </div>
+      )}
+
       <div className="cart-items">
         <div className="cart-items-title">
           <p>Item</p>
@@ -105,7 +152,27 @@ const Cart = () => {
         {cartItemsList.map((item) => (
           <div key={item._id}>
             <div className="cart-items-title cart-items-item">
-              <img src={item.image} alt={item.name} />
+              <div className="cart-item-image-container">
+                <img src={item.image} alt={item.name} />
+                <button
+                  className={`wishlist-heart-btn ${
+                    wishlistItems[item._id] ? "active" : ""
+                  }`}
+                  onClick={() => handleToggleWishlist(item._id)}
+                  title={
+                    wishlistItems[item._id]
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"
+                  }
+                >
+                  <i
+                    className={`bi ${
+                      wishlistItems[item._id] ? "bi-heart-fill" : "bi-heart"
+                    }`}
+                  ></i>
+                </button>
+              </div>
+
               <div className="item-details">
                 <p className="item-name">{item.name}</p>
                 <p className="item-category">{item.category}</p>
@@ -167,28 +234,34 @@ const Cart = () => {
           <div>
             <div className="cart-total-details">
               <p>Subtotal</p>
-              <p>₹{getTotalCartAmount()}</p>
+              <p>₹{cartTotal}</p>
             </div>
             <hr />
 
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : 30}</p>
+              <p className={deliveryFee === 0 ? "free-delivery-text" : ""}>
+                {deliveryFee === 0 ? (
+                  <span>
+                    <s>₹30</s> <strong>FREE</strong>
+                  </span>
+                ) : (
+                  `₹${deliveryFee}`
+                )}
+              </p>
             </div>
             <hr />
 
             <div className="cart-total-details">
               <strong>Total</strong>
-              <strong>
-                ₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 30}
-              </strong>
+              <strong>₹{finalTotal}</strong>
             </div>
           </div>
 
           <button
             onClick={() => navigate("/order")}
-            disabled={getTotalCartAmount() === 0}
-            className={getTotalCartAmount() === 0 ? "disabled" : ""}
+            disabled={cartTotal === 0}
+            className={cartTotal === 0 ? "disabled" : ""}
           >
             PROCEED TO CHECKOUT
           </button>

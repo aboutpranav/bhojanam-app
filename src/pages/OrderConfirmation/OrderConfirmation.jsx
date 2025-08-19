@@ -9,8 +9,15 @@ import { StoreContext } from "../../context/StoreContext";
 const OrderConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cartItems, food_list, getTotalCartAmount, clearCart } =
-    useContext(StoreContext);
+  const {
+    cartItems,
+    food_list,
+    getTotalCartAmount,
+    getDeliveryFee,
+    getFinalTotal,
+    isFreeDeliveryEligible,
+    clearCart,
+  } = useContext(StoreContext);
 
   const [orderData, setOrderData] = useState(null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -44,8 +51,9 @@ const OrderConfirmation = () => {
 
   const cartItemsForDisplay = getCartItemsForDisplay();
   const subtotal = getTotalCartAmount();
-  const deliveryFee = subtotal === 0 ? 0 : 30;
-  const total = subtotal + deliveryFee;
+  const deliveryFee = getDeliveryFee();
+  const total = getFinalTotal();
+  const freeDeliveryEligible = isFreeDeliveryEligible();
 
   const createConfetti = () => {
     setShowConfetti(true);
@@ -175,6 +183,18 @@ const OrderConfirmation = () => {
             </p>
           </div>
 
+          {freeDeliveryEligible && (
+            <div className="free-delivery-celebration">
+              <div className="celebration-content">
+                <i className="bi bi-check-circle-fill"></i>
+                <span>
+                  🎉 <strong>Congratulations!</strong> You've earned FREE
+                  DELIVERY and saved ₹30!
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="order-content">
             <div className="order-section">
               <h2>Your Order</h2>
@@ -234,7 +254,18 @@ const OrderConfirmation = () => {
                 </div>
                 <div className="summary-row">
                   <span>Delivery Fee</span>
-                  <span>₹{deliveryFee}</span>
+                  <span
+                    className={deliveryFee === 0 ? "free-delivery-text" : ""}
+                  >
+                    {deliveryFee === 0 ? (
+                      <span>
+                        <s>₹30</s>{" "}
+                        <strong style={{ color: "#28a745" }}>FREE</strong>
+                      </span>
+                    ) : (
+                      `₹${deliveryFee}`
+                    )}
+                  </span>
                 </div>
                 <hr />
                 <div className="summary-row total-row">
@@ -244,6 +275,13 @@ const OrderConfirmation = () => {
                 <div className="estimated-time">
                   <p>🚚 Estimated delivery time: 30-45 minutes</p>
                 </div>
+                {freeDeliveryEligible && (
+                  <div className="savings-highlight">
+                    <p style={{ color: "#28a745", fontWeight: "bold" }}>
+                      💰 You saved ₹30 on delivery fees!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -301,6 +339,14 @@ const OrderConfirmation = () => {
                   : "30-45 minutes"}
               </span>
             </div>
+            {freeDeliveryEligible && (
+              <div className="detail-row">
+                <span className="label">Delivery Savings:</span>
+                <span className="value" style={{ color: "#28a745" }}>
+                  ₹30 (FREE DELIVERY!)
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="success-actions">

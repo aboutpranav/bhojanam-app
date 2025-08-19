@@ -7,7 +7,13 @@ import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount } = useContext(StoreContext);
+  const {
+    getTotalCartAmount,
+    getDeliveryFee,
+    getFinalTotal,
+    isFreeDeliveryEligible,
+    getRemainingForFreeDelivery,
+  } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const [addresses, setAddresses] = useState([]);
@@ -101,6 +107,12 @@ const PlaceOrder = () => {
     });
   };
 
+  const cartTotal = getTotalCartAmount();
+  const deliveryFee = getDeliveryFee();
+  const finalTotal = getFinalTotal();
+  const freeDeliveryEligible = isFreeDeliveryEligible();
+  const remainingForFreeDelivery = getRemainingForFreeDelivery();
+
   return (
     <form className="place-order">
       <div className="place-order-left">
@@ -158,31 +170,60 @@ const PlaceOrder = () => {
       <div className="place-order-right">
         <div className="cart-total">
           <h2>Cart Total</h2>
+
+          {!freeDeliveryEligible && remainingForFreeDelivery > 0 && (
+            <div className="free-delivery-notice">
+              <div className="notice-content">
+                <i className="bi bi-truck"></i>
+                <span>
+                  Add ₹{remainingForFreeDelivery} more to get{" "}
+                  <strong>FREE DELIVERY!</strong>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {freeDeliveryEligible && (
+            <div className="free-delivery-achieved">
+              <div className="notice-content success">
+                <i className="bi bi-check-circle-fill"></i>
+                <span>
+                  🎉 <strong>FREE DELIVERY</strong> unlocked!
+                </span>
+              </div>
+            </div>
+          )}
+
           <div>
             <div className="cart-total-details">
               <p>Subtotal</p>
-              <p>₹ {getTotalCartAmount()}</p>
+              <p>₹ {cartTotal}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹ {getTotalCartAmount() === 0 ? 0 : 30}</p>
+              <p className={deliveryFee === 0 ? "free-delivery-text" : ""}>
+                {deliveryFee === 0 ? (
+                  <span>
+                    <s>₹30</s>{" "}
+                    <strong style={{ color: "#28a745" }}>FREE</strong>
+                  </span>
+                ) : (
+                  `₹ ${deliveryFee}`
+                )}
+              </p>
             </div>
             <hr />
             <div className="cart-total-details">
               <strong>Total</strong>
-              <strong>
-                ₹ {getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 30}
-              </strong>
+              <strong>₹ {finalTotal}</strong>
             </div>
           </div>
           <button
             type="button"
             onClick={handleProceedToPayment}
-            disabled={!selectedAddress || getTotalCartAmount() === 0}
-            className={
-              !selectedAddress || getTotalCartAmount() === 0 ? "disabled" : ""
-            }
+            disabled={!selectedAddress || cartTotal === 0}
+            className={!selectedAddress || cartTotal === 0 ? "disabled" : ""}
           >
             Proceed to Confirmation
           </button>

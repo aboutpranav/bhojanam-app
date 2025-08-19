@@ -15,13 +15,13 @@ const FoodItem = ({ id, name, price, description, image, rating }) => {
   } = useContext(StoreContext);
 
   const handleWishlistClick = (e) => {
-    e.preventDefault(); // Prevent navigation when clicking wishlist
+    e.preventDefault();
     e.stopPropagation();
     toggleWishlist(id);
   };
 
   const handleCartClick = (e) => {
-    e.preventDefault(); // Prevent navigation when clicking cart buttons
+    e.preventDefault();
     e.stopPropagation();
   };
 

@@ -46,7 +46,6 @@ const FilterSort = () => {
 
       {showFilters && (
         <div className="filter-sort-panel">
-          {/* Rating Filter Section */}
           <div className="filter-section">
             <h4>Filter by Rating</h4>
             <div className="rating-filter-options">

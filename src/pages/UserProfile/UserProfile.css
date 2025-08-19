@@ -340,6 +340,96 @@
   text-transform: uppercase;
 }
 
+.address-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.edit-address-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-address-btn:hover {
+  background: #e3f2fd;
+  color: #0056b3;
+  transform: scale(1.1);
+}
+
+.edit-address-btn:active {
+  transform: scale(0.95);
+}
+
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background: #f8d7da;
+  transform: scale(1.1);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .address-actions {
+    gap: 8px;
+  }
+
+  .edit-address-btn,
+  .delete-btn {
+    padding: 8px;
+    font-size: 18px;
+  }
+
+  .address-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .address-actions {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-address-btn,
+  .delete-btn {
+    padding: 10px;
+    font-size: 20px;
+  }
+}
+
 .delete-btn {
   background: none;
   border: none;

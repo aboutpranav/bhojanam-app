@@ -21,6 +21,9 @@ const FoodItemDetails = () => {
     wishlistItems,
     toggleWishlist,
     food_list,
+    getTotalCartAmount,
+    isFreeDeliveryEligible,
+    getRemainingForFreeDelivery,
   } = useContext(StoreContext);
 
   // const API_URL = "http://localhost:3000/foodItems";
@@ -50,24 +53,21 @@ const FoodItemDetails = () => {
     fetchFoodItem();
   }, [id]);
 
-  // Sync quantity with cart quantity when component loads or cart changes
   useEffect(() => {
     const currentCartQuantity = cartItems[id] || 0;
     if (currentCartQuantity > 0) {
       setQuantity(currentCartQuantity);
     } else {
-      setQuantity(1); // Reset to 1 if item is not in cart
+      setQuantity(1);
     }
   }, [id, cartItems]);
 
-  // Fixed handleAddToCart function - sets exact quantity in cart
   const handleAddToCart = () => {
     if (foodItem) {
       setCartQuantity(foodItem._id, quantity);
     }
   };
 
-  // Fixed handleBuyNow function - sets exact quantity in cart
   const handleBuyNow = () => {
     if (foodItem) {
       setCartQuantity(foodItem._id, quantity);
@@ -88,18 +88,12 @@ const FoodItemDetails = () => {
   const incrementQuantity = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    // Optional: You can also add to cart immediately
-    // addToCart(id);
   };
 
   const decrementQuantity = () => {
     if (quantity > 1) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      // Optional: You can also remove from cart immediately
-      // if (cartItems[id] > 0) {
-      //   removeFromCart(id);
-      // }
     }
   };
   const renderStars = (rating) => {
@@ -178,10 +172,12 @@ const FoodItemDetails = () => {
 
   const currentCartQuantity = cartItems[foodItem._id] || 0;
   const similarItems = getSimilarItems();
+  const cartTotal = getTotalCartAmount();
+  const freeDeliveryEligible = isFreeDeliveryEligible();
+  const remainingForFreeDelivery = getRemainingForFreeDelivery();
 
   return (
     <div className="food-item-details">
-      {/* Breadcrumb Navigation */}
       <div className="breadcrumb">
         <Link to="/">Home</Link>
         <span> / </span>
@@ -191,7 +187,6 @@ const FoodItemDetails = () => {
       </div>
 
       <div className="food-item-details-container">
-        {/* Left Side - Image */}
         <div className="food-item-image-section">
           <div className="image-container">
             <img src={foodItem.image} alt={foodItem.name} />
@@ -216,7 +211,6 @@ const FoodItemDetails = () => {
           </div>
         </div>
 
-        {/* Right Side - Details */}
         <div className="food-item-info-section">
           <div className="category-badge">
             <span>{foodItem.category}</span>
@@ -235,10 +229,10 @@ const FoodItemDetails = () => {
 
           <div className="price-section">
             <span className="current-price">₹{foodItem.price}</span>
-            {/* <span className="original-price">
+            <span className="original-price">
               ₹{Math.floor(foodItem.price * 1.2)}
-            </span> */}
-            {/* <span className="discount">17% OFF</span> */}
+            </span>
+            <span className="discount">17% OFF</span>
           </div>
 
           <div className="quantity-section">
@@ -278,11 +272,21 @@ const FoodItemDetails = () => {
           <div className="additional-info">
             <div className="info-item">
               <i className="bi bi-truck"></i>
-              <span>Free delivery on orders above ₹299</span>
+              <span>
+                {freeDeliveryEligible ? (
+                  <strong style={{ color: "#28a745" }}>
+                    🎉 FREE DELIVERY (You saved ₹30!)
+                  </strong>
+                ) : remainingForFreeDelivery > 0 ? (
+                  `Add ₹${remainingForFreeDelivery} more for FREE delivery!`
+                ) : (
+                  "Free delivery on orders above ₹299"
+                )}
+              </span>
             </div>
             <div className="info-item">
               <i className="bi bi-clock"></i>
-              <span>Estimated delivery: 30-45 minutes</span>
+              <span>Estimated delivery: 25-35 minutes</span>
             </div>
             <div className="info-item">
               <i className="bi bi-shield-check"></i>
@@ -292,7 +296,6 @@ const FoodItemDetails = () => {
         </div>
       </div>
 
-      {/* Similar Items Section */}
       {similarItems.length > 0 && (
         <div className="similar-items-section">
           <h3>Similar Items You Might Like</h3>

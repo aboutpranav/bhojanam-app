@@ -62,7 +62,6 @@ const StoreContextProvider = (props) => {
     }
   };
 
-  // function to add multiple quantities at once
   const addToCartBulk = (itemId, quantity) => {
     const item = food_list.find((product) => product._id === itemId);
     const itemName = item ? item.name : "Item";
@@ -75,13 +74,11 @@ const StoreContextProvider = (props) => {
     toast.success(`${quantity} x ${itemName} added to cart!`);
   };
 
-  // function to set exact quantity in cart
   const setCartQuantity = (itemId, quantity) => {
     const item = food_list.find((product) => product._id === itemId);
     const itemName = item ? item.name : "Item";
 
     if (quantity <= 0) {
-      // Remove item from cart completely
       setCartItems((prev) => {
         const newCart = { ...prev };
         delete newCart[itemId];
@@ -202,6 +199,29 @@ const StoreContextProvider = (props) => {
     return totalAmount;
   };
 
+  const getDeliveryFee = () => {
+    const cartTotal = getTotalCartAmount();
+    if (cartTotal === 0) return 0;
+    if (cartTotal >= 299) return 0;
+    return 30;
+  };
+
+  const getFinalTotal = () => {
+    const cartTotal = getTotalCartAmount();
+    const deliveryFee = getDeliveryFee();
+    return cartTotal + deliveryFee;
+  };
+
+  const isFreeDeliveryEligible = () => {
+    return getTotalCartAmount() >= 299;
+  };
+
+  const getRemainingForFreeDelivery = () => {
+    const cartTotal = getTotalCartAmount();
+    if (cartTotal >= 299) return 0;
+    return 299 - cartTotal;
+  };
+
   const contextValue = {
     food_list,
     filteredFoodList,
@@ -213,6 +233,10 @@ const StoreContextProvider = (props) => {
     removeFromCart,
     clearCart,
     getTotalCartAmount,
+    getDeliveryFee,
+    getFinalTotal,
+    isFreeDeliveryEligible,
+    getRemainingForFreeDelivery,
     searchTerm,
     handleSearch,
     clearSearch,

@@ -9,6 +9,7 @@ const UserProfile = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
   const [showAddAddress, setShowAddAddress] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
   const [newAddress, setNewAddress] = useState({
     firstName: "",
     lastName: "",
@@ -22,7 +23,6 @@ const UserProfile = () => {
   });
   const [editingProfile, setEditingProfile] = useState(false);
 
-  // Default user data
   const [user, setUser] = useState({
     firstName: "Sample",
     lastName: "User",
@@ -184,31 +184,79 @@ const UserProfile = () => {
     });
   };
 
+  const startEditAddress = (address) => {
+    setEditingAddress(address._id);
+    setNewAddress({
+      firstName: address.firstName,
+      lastName: address.lastName,
+      email: address.email,
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      zipCode: address.zipCode,
+      country: address.country,
+      phone: address.phone,
+    });
+    setShowAddAddress(true);
+  };
+
+  const cancelEdit = () => {
+    setEditingAddress(null);
+    setNewAddress({
+      firstName: "",
+      lastName: "",
+      email: "",
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phone: "",
+    });
+    setShowAddAddress(false);
+  };
+
   const handleAddAddress = async (e) => {
     e.preventDefault();
 
-    toast.info("Adding new address...");
+    const isEditing = editingAddress !== null;
+
+    toast.info(isEditing ? "Updating address..." : "Adding new address...");
 
     try {
-      const response = await fetch(
-        "https://bhojanam-app-backend.vercel.app/addresses",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newAddress),
-        }
-      );
+      const url = isEditing
+        ? `https://bhojanam-app-backend.vercel.app/addresses/${editingAddress}`
+        : "https://bhojanam-app-backend.vercel.app/addresses";
+
+      const method = isEditing ? "POST" : "POST";
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAddress),
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to add address");
+        throw new Error(
+          isEditing ? "Failed to update address" : "Failed to add address"
+        );
       }
 
       const data = await response.json();
-      console.log("Address added successfully:", data);
+      console.log(
+        isEditing
+          ? "Address updated successfully:"
+          : "Address added successfully:",
+        data
+      );
 
-      toast.success("Address added successfully! 🏠");
+      toast.success(
+        isEditing
+          ? "Address updated successfully! 📝"
+          : "Address added successfully! 🏠"
+      );
 
       setNewAddress({
         firstName: "",
@@ -222,12 +270,20 @@ const UserProfile = () => {
         phone: "",
       });
       setShowAddAddress(false);
+      setEditingAddress(null);
 
       fetchAddresses();
     } catch (error) {
-      console.error("Error adding address:", error);
+      console.error(
+        isEditing ? "Error updating address:" : "Error adding address:",
+        error
+      );
 
-      toast.error(`Failed to add address: ${error.message}`);
+      toast.error(
+        isEditing
+          ? `Failed to update address: ${error.message}`
+          : `Failed to add address: ${error.message}`
+      );
     }
   };
 
@@ -403,7 +459,21 @@ const UserProfile = () => {
               <h2>Saved Addresses</h2>
               <button
                 className="add-btn"
-                onClick={() => setShowAddAddress(true)}
+                onClick={() => {
+                  setEditingAddress(null);
+                  setNewAddress({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    street: "",
+                    city: "",
+                    state: "",
+                    zipCode: "",
+                    country: "",
+                    phone: "",
+                  });
+                  setShowAddAddress(true);
+                }}
               >
                 Add New Address
               </button>
@@ -413,11 +483,10 @@ const UserProfile = () => {
               <div className="add-address-modal">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h3>Add New Address</h3>
-                    <button
-                      className="close-btn"
-                      onClick={() => setShowAddAddress(false)}
-                    >
+                    <h3>
+                      {editingAddress ? "Edit Address" : "Add New Address"}
+                    </h3>
+                    <button className="close-btn" onClick={cancelEdit}>
                       ×
                     </button>
                   </div>
@@ -502,12 +571,12 @@ const UserProfile = () => {
                     />
                     <div className="form-actions">
                       <button type="submit" className="save-btn">
-                        Save Address
+                        {editingAddress ? "Update Address" : "Save Address"}
                       </button>
                       <button
                         type="button"
                         className="cancel-btn"
-                        onClick={() => setShowAddAddress(false)}
+                        onClick={cancelEdit}
                       >
                         Cancel
                       </button>
@@ -529,12 +598,22 @@ const UserProfile = () => {
                       <span className="address-type">
                         {address.firstName} {address.lastName}
                       </span>
-                      <button
-                        className="delete-btn"
-                        onClick={() => deleteAddress(address._id)}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
+                      <div className="address-actions">
+                        <button
+                          className="edit-address-btn"
+                          onClick={() => startEditAddress(address)}
+                          title="Edit address"
+                        >
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => deleteAddress(address._id)}
+                          title="Delete address"
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
                     </div>
                     <div className="address-details">
                       <p>{address.email}</p>
