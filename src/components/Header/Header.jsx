@@ -1,5 +1,6 @@
 import React from "react";
 import "./Header.css";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -15,9 +16,9 @@ const Header = () => {
           every meal memorable.
         </p>
 
-        <a href="/menu">
+        <Link to="/menu">
           <button>View Menu</button>
-        </a>
+        </Link>
       </div>
     </div>
   );

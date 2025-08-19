@@ -49,6 +49,7 @@ const FoodItem = ({ id, name, price, description, image, rating }) => {
               strokeLinejoin="round"
             />
           </svg>
+          {/* <i class="bi bi-heart"></i> */}
         </div>
 
         {!cartItems[id] ? (
