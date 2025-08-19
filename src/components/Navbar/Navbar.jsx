@@ -14,6 +14,7 @@ const Navbar = () => {
     handleSearch,
     clearSearch,
     getWishlistCount,
+    cartItems,
   } = useContext(StoreContext);
 
   const handleSearchChange = (e) => {
@@ -30,6 +31,10 @@ const Navbar = () => {
 
   const handleMenuClick = (menuItem) => {
     setMenu(menuItem);
+  };
+
+  const getCartItemsCount = () => {
+    return Object.values(cartItems).reduce((sum, qty) => sum + qty, 0);
   };
 
   return (
@@ -222,12 +227,12 @@ const Navbar = () => {
                   className="bi bi-cart fs-4 navbar-icon"
                   style={{ color: "#49557e" }}
                 ></i>
-                {getTotalCartAmount() > 0 && (
+                {getCartItemsCount() > 0 && (
                   <span
                     className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                     style={{ fontSize: "0.6rem" }}
                   >
-                    •
+                    {getCartItemsCount()}
                   </span>
                 )}
               </Link>
