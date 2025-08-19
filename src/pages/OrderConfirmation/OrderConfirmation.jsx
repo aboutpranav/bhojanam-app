@@ -192,6 +192,7 @@ const OrderConfirmation = () => {
                   DELIVERY and saved ₹30!
                 </span>
               </div>
+              <br />
             </div>
           )}
 

@@ -180,6 +180,7 @@ const PlaceOrder = () => {
                   <strong>FREE DELIVERY!</strong>
                 </span>
               </div>
+              <br />
             </div>
           )}
 
@@ -191,6 +192,7 @@ const PlaceOrder = () => {
                   🎉 <strong>FREE DELIVERY</strong> unlocked!
                 </span>
               </div>
+              <br />
             </div>
           )}
 
