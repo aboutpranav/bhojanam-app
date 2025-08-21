@@ -1,7 +1,5 @@
-import React, { useContext } from "react";
-
+import React, { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +21,19 @@ const Cart = () => {
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+
+    return () => window.removeEventListener("resize", checkDevice);
+  }, []);
 
   const handleRemoveFromCart = (itemId) => {
     const item = food_list.find((product) => product._id === itemId);
@@ -71,6 +82,135 @@ const Cart = () => {
   const freeDeliveryEligible = isFreeDeliveryEligible();
   const remainingForFreeDelivery = getRemainingForFreeDelivery();
 
+  // Render mobile cart item
+  const renderMobileCartItem = (item) => (
+    <div key={item._id} className="cart-items-item">
+      <div className="mobile-item-header">
+        <div className="cart-item-image-container">
+          <img src={item.image} alt={item.name} />
+          <button
+            className={`wishlist-heart-btn ${
+              wishlistItems[item._id] ? "active" : ""
+            }`}
+            onClick={() => handleToggleWishlist(item._id)}
+            title={
+              wishlistItems[item._id]
+                ? "Remove from wishlist"
+                : "Add to wishlist"
+            }
+          >
+            <i
+              className={`bi ${
+                wishlistItems[item._id] ? "bi-heart-fill" : "bi-heart"
+              }`}
+            ></i>
+          </button>
+        </div>
+
+        <div className="mobile-item-info">
+          <p className="item-name">{item.name}</p>
+          <p className="item-category">{item.category}</p>
+        </div>
+
+        <div className="mobile-price-section">
+          <p className="item-price">₹{item.price}</p>
+          <p className="item-total">₹{item.price * cartItems[item._id]}</p>
+        </div>
+      </div>
+
+      <div className="mobile-item-controls">
+        <div className="quantity-controls">
+          <button
+            className="quantity-btn decrease"
+            onClick={() => handleRemoveFromCart(item._id)}
+            disabled={cartItems[item._id] <= 1}
+          >
+            <i className="bi bi-dash"></i>
+          </button>
+          <span className="quantity-display">{cartItems[item._id]}</span>
+          <button
+            className="quantity-btn increase"
+            onClick={() => handleAddToCart(item._id)}
+          >
+            <i className="bi bi-plus"></i>
+          </button>
+        </div>
+
+        <button
+          onClick={() => handleRemoveCompleteItem(item._id)}
+          className="remove-item-btn"
+          title="Remove item completely"
+        >
+          <i className="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+  );
+
+  // Render desktop cart item
+  const renderDesktopCartItem = (item) => (
+    <div key={item._id}>
+      <div className="cart-items-title cart-items-item">
+        <div className="cart-item-image-container">
+          <img src={item.image} alt={item.name} />
+          <button
+            className={`wishlist-heart-btn ${
+              wishlistItems[item._id] ? "active" : ""
+            }`}
+            onClick={() => handleToggleWishlist(item._id)}
+            title={
+              wishlistItems[item._id]
+                ? "Remove from wishlist"
+                : "Add to wishlist"
+            }
+          >
+            <i
+              className={`bi ${
+                wishlistItems[item._id] ? "bi-heart-fill" : "bi-heart"
+              }`}
+            ></i>
+          </button>
+        </div>
+
+        <div className="item-details">
+          <p className="item-name">{item.name}</p>
+          <p className="item-category">{item.category}</p>
+        </div>
+        <p className="item-price">₹{item.price}</p>
+
+        <div className="quantity-controls">
+          <button
+            className="quantity-btn decrease"
+            onClick={() => handleRemoveFromCart(item._id)}
+            disabled={cartItems[item._id] <= 1}
+          >
+            <i className="bi bi-dash"></i>
+          </button>
+          <span className="quantity-display">{cartItems[item._id]}</span>
+          <button
+            className="quantity-btn increase"
+            onClick={() => handleAddToCart(item._id)}
+          >
+            <i className="bi bi-plus"></i>
+          </button>
+        </div>
+
+        <p className="item-total">₹{item.price * cartItems[item._id]}</p>
+
+        <div className="item-actions">
+          <button
+            onClick={() => handleRemoveCompleteItem(item._id)}
+            className="remove-item-btn"
+            title="Remove item completely"
+          >
+            <i className="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+      <hr />
+    </div>
+  );
+
   if (cartItemsList.length === 0) {
     return (
       <div className="cart empty-cart">
@@ -109,16 +249,14 @@ const Cart = () => {
           <div className="banner-content">
             <i className="bi bi-truck"></i>
             <span>
-              {" "}
               Add ₹{remainingForFreeDelivery} more to get{" "}
               <strong>FREE DELIVERY!</strong>
             </span>
-            <br /> <br />
           </div>
           <div className="progress-bar">
             <div
               className="progress-fill"
-              style={{ width: `${(cartTotal / 299) * 100}%` }}
+              style={{ width: `${Math.min((cartTotal / 299) * 100, 100)}%` }}
             ></div>
           </div>
         </div>
@@ -129,88 +267,29 @@ const Cart = () => {
           <div className="banner-content success">
             <i className="bi bi-check-circle-fill"></i>
             <span>
-              {" "}
               🎉 <strong>Congratulations!</strong> You've earned FREE DELIVERY!
             </span>
-            <br /> <br />
           </div>
         </div>
       )}
 
       <div className="cart-items">
-        <div className="cart-items-title">
-          <p>Item</p>
-          <p>Title</p>
-          <p>Price</p>
-          <p>Quantity</p>
-          <p>Total</p>
-          <p>Actions</p>
-        </div>
-
-        <hr />
-
-        {cartItemsList.map((item) => (
-          <div key={item._id}>
-            <div className="cart-items-title cart-items-item">
-              <div className="cart-item-image-container">
-                <img src={item.image} alt={item.name} />
-                <button
-                  className={`wishlist-heart-btn ${
-                    wishlistItems[item._id] ? "active" : ""
-                  }`}
-                  onClick={() => handleToggleWishlist(item._id)}
-                  title={
-                    wishlistItems[item._id]
-                      ? "Remove from wishlist"
-                      : "Add to wishlist"
-                  }
-                >
-                  <i
-                    className={`bi ${
-                      wishlistItems[item._id] ? "bi-heart-fill" : "bi-heart"
-                    }`}
-                  ></i>
-                </button>
-              </div>
-
-              <div className="item-details">
-                <p className="item-name">{item.name}</p>
-                <p className="item-category">{item.category}</p>
-              </div>
-              <p className="item-price">₹{item.price}</p>
-
-              <div className="quantity-controls">
-                <button
-                  className="quantity-btn decrease"
-                  onClick={() => handleRemoveFromCart(item._id)}
-                  disabled={cartItems[item._id] <= 1}
-                >
-                  <i className="bi bi-dash"></i>
-                </button>
-                <span className="quantity-display">{cartItems[item._id]}</span>
-                <button
-                  className="quantity-btn increase"
-                  onClick={() => handleAddToCart(item._id)}
-                >
-                  <i className="bi bi-plus"></i>
-                </button>
-              </div>
-
-              <p className="item-total">₹{item.price * cartItems[item._id]}</p>
-
-              <div className="item-actions">
-                <button
-                  onClick={() => handleRemoveCompleteItem(item._id)}
-                  className="remove-item-btn"
-                  title="Remove item completely"
-                >
-                  <i className="bi bi-trash"></i>
-                </button>
-              </div>
-            </div>
-            <hr />
+        {!isMobile && (
+          <div className="cart-items-title">
+            <p>Item</p>
+            <p>Title</p>
+            <p>Price</p>
+            <p>Quantity</p>
+            <p>Total</p>
+            <p>Actions</p>
           </div>
-        ))}
+        )}
+
+        {!isMobile && <hr />}
+
+        {cartItemsList.map((item) =>
+          isMobile ? renderMobileCartItem(item) : renderDesktopCartItem(item)
+        )}
       </div>
 
       <div className="cart-bottom">
